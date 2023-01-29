@@ -45,11 +45,20 @@ def adf_node_list():
     )
 
 
+def _check_is_adf_node(input_item):
+    return ADFObject in type(input_item).__mro__
+
+
 class ADFObject(object):
     def __init__(self, node_type, chain_mode=True):
+        """
+        Node/Mark Object in an Atlassian Document.
+        :param node_type: Define the type of the node.
+        :param chain_mode: Specify which node to be returned after calling add()
+            chain_mode: True  -> Return Original Node
+            chain_mode: False -> Return the new Node
+        """
         node_list, mark_list = adf_node_list(), adf_mark_list()
-
-        # Specify which node to be returned after calling add()
         self.chain_mode = chain_mode
 
         self.type = node_type
@@ -63,17 +72,43 @@ class ADFObject(object):
             for prop_key, prop_type in self._object_list[self.type]['prop'].items()
         }
 
-    def add(self):
-        pass
+    def add(self, key_or_node, chain_mode=None, **kwargs):
+        """
+        Add a node to the current node.
+        :param key_or_node: Key of the new node or existing node created.
+        :param chain_mode: Chain Mode of the new node created by key. Existing node not affected.
+        :param kwargs:
+        :return: self.chain_mode ? Current node : New Node
+        """
+        self._check_if_node_has_children()
+        new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
+        new_node = ADFObject(key_or_node, chain_mode=new_chain_mode) if not _check_is_adf_node(
+            key_or_node) else key_or_node
+        self.local_info['content'].append(new_node)
+        return self if self.chain_mode else new_node
 
-    def extend_content(self):
-        pass
+    def extend_content(self, nodes):
+        """
+        Add a list of existing nodes to the current node.
+        :param nodes: List of input nodes
+        :return: Current Node
+        """
+        self._check_if_node_has_children()
+        nodes = [nodes] if not isinstance(nodes, list) else nodes
+        if any(not _check_is_adf_node(node) for node in nodes):
+            raise RuntimeError('Input must only contains ADFObject.')
+        self.local_info['content'].extend(nodes)
+        return self
 
     def render(self):
         pass
 
     def assign_info(self, field, **kwargs):
         pass
+
+    def _check_if_node_has_children(self):
+        if 'content' not in self.local_info:
+            raise RuntimeError(f'"{self.type}" node does not have the filed "content" for adding sub-nodes.')
 
 
 class ADFDoc(ADFObject):
