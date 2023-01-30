@@ -164,3 +164,24 @@ class ADFDoc(ADFObject):
         :return: None
         """
         return jsonschema.validate(self.render(), adf_schema())
+
+
+def load_adf(input_object: dict):
+    if 'type' not in input_object:
+        return ValueError('Loading ADF document with the filed "type" missing.')
+    new_node = ADFDoc() if (input_type := input_object['type']) == 'doc' else ADFObject(input_type)
+
+    for field, value in input_object.items():
+        if field == 'type':
+            continue
+        if isinstance(value, dict):
+            new_node.assign_info(field, **value)
+        elif isinstance(value, list):
+            if field == 'content':
+                new_node.extend_content([load_adf(child_node) for child_node in value])
+            if field == 'marks':
+                new_node.assign_info(field, *[load_adf(child_node) for child_node in value])
+        else:
+            new_node.assign_info(field, value)
+
+    return new_node
