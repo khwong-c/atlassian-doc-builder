@@ -67,7 +67,7 @@ class ADFObject(object):
             raise RuntimeError(f'{node_type} does not exists in the schema.')
 
         self._object_list = node_list if self.is_node else mark_list
-        self._local_info = {
+        self.local_info = {
             prop_key: {'array': list, 'object': dict}.get(prop_type, lambda: None)()
             for prop_key, prop_type in self._object_list[self.type]['prop'].items()
         }
@@ -84,7 +84,7 @@ class ADFObject(object):
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
         new_node = ADFObject(key_or_node, chain_mode=new_chain_mode) if not _check_is_adf_node(
             key_or_node) else key_or_node
-        self._local_info['content'].append(new_node)
+        self.local_info['content'].append(new_node)
         return self if self.chain_mode else new_node
 
     def extend_content(self, nodes):
@@ -97,7 +97,7 @@ class ADFObject(object):
         nodes = [nodes] if not isinstance(nodes, list) else nodes
         if any(not _check_is_adf_node(node) for node in nodes):
             raise RuntimeError('Input must only contains ADFObject.')
-        self._local_info['content'].extend(nodes)
+        self.local_info['content'].extend(nodes)
         return self
 
     def render(self):
@@ -105,19 +105,33 @@ class ADFObject(object):
         Build a dictionary object with the current node and all the nodes under it.
         :return: dict
         """
-        current_level = {
-            prop_key: prop_value
-            for prop_key, prop_value in self._local_info.items()
-            if prop_value is not None and (
-                    not isinstance(prop_value, dict) or not isinstance(prop_value, list) or len(prop_value) > 0
-            ) and prop_key not in {'type', 'content'}
-        }
-        current_level['type'] = self.type
-        if 'content' in self._local_info:
-            current_level['content'] = [child_node.render() for child_node in self._local_info['content']]
-        if 'marks' in self._local_info:
-            current_level['marks'] = [child_node.render() for child_node in self._local_info['marks']]
-        return current_level
+        # BFS Rendering.
+        # Marks does not have further child node. Recursive call accepted.
+        render_queue, top_node_rendered = [(self, None)], None
+        while render_queue:
+            cur_node, parent_node = render_queue.pop(0)
+            current_level_rendered = {
+                prop_key: prop_value
+                for prop_key, prop_value in cur_node.local_info.items()
+                if prop_value is not None and (
+                        not isinstance(prop_value, dict) or not isinstance(prop_value, list) or len(prop_value) > 0
+                ) and prop_key not in {'type', 'content'}
+            }
+            current_level_rendered['type'] = cur_node.type
+            if 'marks' in cur_node.local_info:
+                current_level_rendered['marks'] = [child_node.render() for child_node in cur_node.local_info['marks']]
+            if 'content' in cur_node.local_info:
+                current_level_rendered['content'] = []
+                render_queue.extend(
+                    (child_node, current_level_rendered) for child_node in cur_node.local_info['content']
+                )
+
+            if parent_node is not None:
+                parent_node['content'].append(current_level_rendered)
+
+            top_node_rendered = current_level_rendered if top_node_rendered is None else top_node_rendered
+
+        return top_node_rendered
 
     def assign_info(self, field, *values, **kwargs):
         """
@@ -127,36 +141,36 @@ class ADFObject(object):
         :param kwargs: Values to be added to a dict.
         :return: Current Node
         """
-        if field not in self._local_info:
+        if field not in self.local_info:
             raise KeyError(f'"{field}" does not exists in the node "{self.type}"')
         if field == 'content':
             raise ValueError(f'"{field}" is protected. Do not modify it with assign_info()')
 
-        if isinstance(self._local_info[field], list):
+        if isinstance(self.local_info[field], list):
             if len(values) == 0:
                 raise RuntimeError("Field specified without specifying any value.")
-            self._local_info[field].extend(list(values))
+            self.local_info[field].extend(list(values))
 
-        elif isinstance(self._local_info[field], dict):
+        elif isinstance(self.local_info[field], dict):
             if len(kwargs) > 0:
-                self._local_info[field].update(kwargs)
+                self.local_info[field].update(kwargs)
 
         else:
             if len(values) != 1:
                 raise RuntimeError(f'Specify 1 value for the field "{field}"')
-            self._local_info[field] = values[0]
+            self.local_info[field] = values[0]
 
         return self
 
     def _check_if_node_has_children(self):
-        if 'content' not in self._local_info:
+        if 'content' not in self.local_info:
             raise RuntimeError(f'"{self.type}" node does not have the filed "content" for adding sub-nodes.')
 
 
 class ADFDoc(ADFObject):
     def __init__(self, chain_mode=True):
         super(ADFDoc, self).__init__('doc', chain_mode=chain_mode)
-        self._local_info['version'] = 1
+        self.local_info['version'] = 1
 
     def validate(self):
         """
