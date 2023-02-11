@@ -59,6 +59,7 @@ class ADFObject(object):
         """
         node_list, mark_list = adf_node_list(), adf_mark_list()
         self.chain_mode = chain_mode
+        self._parent = None
 
         self.type = node_type
         self.is_node, self.is_mark = self.type in node_list, self.type in mark_list
@@ -70,6 +71,10 @@ class ADFObject(object):
             prop_key: {'array': list, 'object': dict}.get(prop_type, lambda: None)()
             for prop_key, prop_type in self._object_list[self.type]['prop'].items()
         }
+
+    @property
+    def parent(self):
+        return self._parent
 
     def add(self, key_or_node, chain_mode=None, **kwargs):
         """
@@ -83,6 +88,8 @@ class ADFObject(object):
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
         new_node = key_or_node if issubclass(type(key_or_node), ADFObject) else ADFObject(key_or_node,
                                                                                           chain_mode=new_chain_mode)
+        new_node._parent = self
+
         if new_node.is_mark:
             if 'marks' not in self.local_info:
                 raise ValueError(f'Adding a mark: {new_node.type} to node: {self.type} is forbidden.')
