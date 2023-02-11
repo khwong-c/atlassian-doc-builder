@@ -1,7 +1,7 @@
 import json
 import re
 import urllib.request
-from functools import cache
+from functools import lru_cache as cache
 
 import jsonschema
 
