@@ -83,7 +83,14 @@ class ADFObject(object):
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
         new_node = key_or_node if issubclass(type(key_or_node), ADFObject) else ADFObject(key_or_node,
                                                                                           chain_mode=new_chain_mode)
-        self.local_info['content'].append(new_node)
+        if new_node.is_mark:
+            if 'marks' not in self.local_info:
+                raise ValueError(f'Adding a mark: {new_node.type} to node: {self.type} is forbidden.')
+            self.local_info['marks'].append(new_node)
+        if new_node.is_node:
+            if 'content' not in self.local_info:
+                raise ValueError(f'Adding a node: {new_node.type} to node: {self.type} is forbidden.')
+            self.local_info['content'].append(new_node)
         return self if self.chain_mode else new_node
 
     def extend_content(self, nodes):
