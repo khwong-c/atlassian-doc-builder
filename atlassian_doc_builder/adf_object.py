@@ -1,4 +1,5 @@
 import json
+import re
 import urllib.request
 from functools import cache
 
@@ -45,11 +46,9 @@ def adf_node_list():
     )
 
 
-def _check_is_adf_node(input_item):
-    return ADFObject in type(input_item).__mro__
-
-
 class ADFObject(object):
+    PATTERN_EXP, PATTERN_VAR = re.compile('\{[^\}]+\}'), re.compile('[0-9a-zA-Z_]+')
+
     def __init__(self, node_type, chain_mode=True):
         """
         Node/Mark Object in an Atlassian Document.
@@ -82,8 +81,8 @@ class ADFObject(object):
         """
         self._check_if_node_has_children()
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
-        new_node = ADFObject(key_or_node, chain_mode=new_chain_mode) if not _check_is_adf_node(
-            key_or_node) else key_or_node
+        new_node = key_or_node if issubclass(type(key_or_node), ADFObject) else ADFObject(key_or_node,
+                                                                                          chain_mode=new_chain_mode)
         self.local_info['content'].append(new_node)
         return self if self.chain_mode else new_node
 
@@ -95,7 +94,7 @@ class ADFObject(object):
         """
         self._check_if_node_has_children()
         nodes = [nodes] if not isinstance(nodes, list) else nodes
-        if any(not _check_is_adf_node(node) for node in nodes):
+        if any(not issubclass(type(node), ADFObject) for node in nodes):
             raise RuntimeError('Input must only contains ADFObject.')
         self.local_info['content'].extend(nodes)
         return self
@@ -128,8 +127,8 @@ class ADFObject(object):
 
             if parent_node is not None:
                 parent_node['content'].append(current_level_rendered)
-
-            top_node_rendered = current_level_rendered if top_node_rendered is None else top_node_rendered
+            else:
+                top_node_rendered = current_level_rendered
 
         return top_node_rendered
 
@@ -159,6 +158,33 @@ class ADFObject(object):
             if len(values) != 1:
                 raise RuntimeError(f'Specify 1 value for the field "{field}"')
             self.local_info[field] = values[0]
+
+        return self
+
+    def apply_variable(self, **kwargs):
+        """
+        Replace all format string expressions under this node, including all child nodes.
+        This routine check all inputs to avoid code injection.
+        :param kwargs: Variables to be replaced.
+        :return: Current Node
+        """
+        resolve_queue = [self]
+        while resolve_queue:
+            cur_obj = resolve_queue.pop(0)
+            if issubclass(type(cur_obj), ADFObject):
+                cur_obj = cur_obj.local_info
+            if isinstance(cur_obj, dict):
+                for item_key, item_value in cur_obj.items():
+                    if item_key in ('content', 'marks'):
+                        resolve_queue.extend(item_value)
+                    if isinstance(item_value, dict):
+                        resolve_queue.append(item_value)
+                    if isinstance(item_value, str) and (expressions := ADFObject.PATTERN_EXP.findall(item_value)):
+                        invalid_variables = [expression for expression in expressions if
+                                             ADFObject.PATTERN_VAR.fullmatch(expression[1:-1].strip()) is None]
+                        if invalid_variables:
+                            raise ValueError(f'Invalid expression detected: {invalid_variables}')
+                        cur_obj[item_key] = item_value.format(**kwargs)
 
         return self
 
