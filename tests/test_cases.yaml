@@ -1,0 +1,4 @@
+{
+  "test_smoke_doc": {"type": "doc", "version": 1, "content": []},
+  "test_smoke_paragraph": {"content": [], "marks":[], "type": "paragraph"},
+}
