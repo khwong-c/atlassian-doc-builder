@@ -2,4 +2,11 @@
   "test_smoke_doc": { "type": "doc", "version": 1, "content": [ ] },
   "test_smoke_paragraph": { "type": "paragraph" },
   "test_chain_mode_false": { "content": [ { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" } ], "type": "doc", "version": 1 },
+  "test_apply_var_in": { "content": [ { "text": "{text_a}", "type": "text" }, { "text": "{text_b}", "type": "text" } ], "type": "paragraph" },
+  "test_apply_var_out": { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" },
+  "test_apply_var_assignment": { "text": "{this_is_danger := text}", "type": "text" },
+  "test_apply_var_function": { "text": "{this_is_danger()}", "type": "text" },
+  "test_apply_var_member": { "text": "{object.member}", "type": "text" },
+  "test_apply_var_array": { "text": "{array[0]}", "type": "text" },
+  "test_apply_var_dict": { "text": "{object['key']}", "type": "text" },
 }

@@ -46,4 +46,19 @@ class TestSanity:
             .validate()
         assert render_output_text(result) == render_output_text(reference_test_objects['test_chain_mode_false'])
 
+    def test_apply_variable_success(self, reference_test_objects):
+        template = load_adf(reference_test_objects['test_apply_var_in'])
+        template.apply_variable(text_a='foo', text_b='bar')
+        assert render_output_text(template) == render_output_text(reference_test_objects['test_apply_var_out'])
 
+    @pytest.mark.parametrize("test_case", [
+        "test_apply_var_assignment",
+        "test_apply_var_function",
+        "test_apply_var_member",
+        "test_apply_var_array",
+        "test_apply_var_dict",
+    ])
+    def test_apply_variable_forbidden(self, reference_test_objects, test_case):
+        with pytest.raises(ValueError):
+            template = load_adf(reference_test_objects[test_case])
+            template.apply_variable()
