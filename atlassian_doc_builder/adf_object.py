@@ -89,8 +89,6 @@ class ADFObject(object):
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
         new_node = key_or_node if issubclass(type(key_or_node), ADFObject) else ADFObject(key_or_node,
                                                                                           chain_mode=new_chain_mode)
-        new_node._parent = self
-
         new_node_field_name = 'marks' if new_node.is_mark else 'content'
         if new_node_field_name not in self._node_prop:
             raise ValueError(f'Adding a {new_node_field_name}: {new_node.type} to node: {self.type} is forbidden.')
@@ -159,6 +157,9 @@ class ADFObject(object):
         self.local_info.setdefault(field, ADFObject._default_field(self._node_prop[field]))
 
         if isinstance(self.local_info[field], list):
+            if field in ('content', 'marks'):
+                for node in values:
+                    node._parent = self
             if values:
                 self.local_info[field].extend(list(values))
 
