@@ -24,8 +24,6 @@ class TestSmoke:
         result.validate()
         assert render_output_text(result) == render_output_text(input_object)
 
-
-class TestSanity:
     @pytest.mark.parametrize(
         "test_input,expected_object_type",
         [("test_smoke_doc", ADFDoc), ("test_smoke_paragraph", ADFObject), ]
@@ -34,6 +32,8 @@ class TestSanity:
         result = load_adf(reference_test_objects[test_input])
         assert type(result) is expected_object_type
 
+
+class TestADFObject:
     def test_chain_add(self):
         result = ADFDoc().add('paragraph').add('paragraph').add('paragraph').validate()
         assert len(result['content']) == 3, f"3 content nodes expected, {len(result['content'])} found instead."
