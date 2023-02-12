@@ -1,4 +1,5 @@
 {
-  "test_smoke_doc": {"type": "doc", "version": 1, "content": []},
-  "test_smoke_paragraph": {"content": [], "marks":[], "type": "paragraph"},
+  "test_smoke_doc": { "type": "doc", "version": 1, "content": [ ] },
+  "test_smoke_paragraph": { "type": "paragraph" },
+  "test_chain_mode_false": { "content": [ { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" } ], "type": "doc", "version": 1 },
 }
