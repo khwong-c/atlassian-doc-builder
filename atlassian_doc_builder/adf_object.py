@@ -84,7 +84,6 @@ class ADFObject(object):
         :param kwargs:
         :return: self.chain_mode ? Current node : New Node
         """
-        self._check_if_node_has_children()
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
         new_node = key_or_node if issubclass(type(key_or_node), ADFObject) else ADFObject(key_or_node,
                                                                                           chain_mode=new_chain_mode)
@@ -102,13 +101,15 @@ class ADFObject(object):
 
     def extend_content(self, nodes):
         """
-        Add a list of existing nodes to the current node.
+        Add a list of existing nodes to the current node. Marks are not allowed.
         :param nodes: List of input nodes
         :return: Current Node
         """
-        self._check_if_node_has_children()
+        if 'content' not in self.local_info:
+            raise RuntimeError(f'"{self.type}" node does not have the filed "content" for adding sub-nodes.')
+
         nodes = [nodes] if not isinstance(nodes, list) else nodes
-        if any(not issubclass(type(node), ADFObject) for node in nodes):
+        if any(not issubclass(type(node), ADFObject) or not node.is_node for node in nodes):
             raise RuntimeError('Input must only contains ADFObject.')
         self.local_info['content'].extend(nodes)
         return self
@@ -201,10 +202,6 @@ class ADFObject(object):
                         cur_obj[item_key] = item_value.format(**kwargs)
 
         return self
-
-    def _check_if_node_has_children(self):
-        if 'content' not in self.local_info:
-            raise RuntimeError(f'"{self.type}" node does not have the filed "content" for adding sub-nodes.')
 
 
 class ADFDoc(ADFObject):
