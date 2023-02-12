@@ -94,10 +94,7 @@ class ADFObject(object):
         new_node_field_name = 'marks' if new_node.is_mark else 'content'
         if new_node_field_name not in self._node_prop:
             raise ValueError(f'Adding a {new_node_field_name}: {new_node.type} to node: {self.type} is forbidden.')
-
-        self.local_info.setdefault(new_node_field_name,
-                                   ADFObject._default_field(self._node_prop[new_node_field_name]))
-        self.local_info[new_node_field_name].append(new_node)
+        self.assign_info(new_node_field_name, new_node)
 
         return self if self.chain_mode else new_node
 
@@ -107,15 +104,8 @@ class ADFObject(object):
         :param nodes: List of input nodes
         :return: Current Node
         """
-        if 'content' not in self._node_prop:
-            raise RuntimeError(f'"{self.type}" node does not have the filed "content" for adding sub-nodes.')
-
         nodes = [nodes] if not isinstance(nodes, list) else nodes
-        if any(not issubclass(type(node), ADFObject) or not node.is_node for node in nodes):
-            raise RuntimeError('Input must only contains ADFObject.')
-        self.local_info.setdefault('content', ADFObject._default_field('content'))
-        self.local_info['content'].extend(nodes)
-        return self
+        return self.assign_info('content', *nodes)
 
     def render(self):
         """
@@ -161,7 +151,11 @@ class ADFObject(object):
         if field not in self._node_prop:
             raise KeyError(f'"{field}" does not exists in the node "{self.type}"')
         if field == 'content':
-            raise ValueError(f'"{field}" is protected. Do not modify it with assign_info()')
+            if any(not issubclass(type(node), ADFObject) or not node.is_node for node in values):
+                raise RuntimeError(f'"{field} only accepts ADFObject which is a node.')
+        if field == 'marks':
+            if any(not issubclass(type(node), ADFObject) or not node.is_mark for node in values):
+                raise RuntimeError(f'"{field} only accepts ADFObject which is a mark.')
         self.local_info.setdefault(field, ADFObject._default_field(self._node_prop[field]))
 
         if isinstance(self.local_info[field], list):
