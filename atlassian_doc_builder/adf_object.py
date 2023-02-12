@@ -67,9 +67,11 @@ class ADFObject(object):
             raise RuntimeError(f'{node_type} does not exists in the schema.')
 
         self._object_list = node_list if self.is_node else mark_list
+        self._node_prop = self._object_list[self.type]['prop']
         self.local_info = {
-            prop_key: {'array': list, 'object': dict}.get(prop_type, lambda: None)()
-            for prop_key, prop_type in self._object_list[self.type]['prop'].items()
+            prop_key: ADFObject._default_field(prop_type)
+            for prop_key, prop_type in self._node_prop.items()
+            if prop_key in self._object_list[self.type]['required']
         }
 
     @property
@@ -89,14 +91,14 @@ class ADFObject(object):
                                                                                           chain_mode=new_chain_mode)
         new_node._parent = self
 
-        if new_node.is_mark:
-            if 'marks' not in self.local_info:
-                raise ValueError(f'Adding a mark: {new_node.type} to node: {self.type} is forbidden.')
-            self.local_info['marks'].append(new_node)
-        if new_node.is_node:
-            if 'content' not in self.local_info:
-                raise ValueError(f'Adding a node: {new_node.type} to node: {self.type} is forbidden.')
-            self.local_info['content'].append(new_node)
+        new_node_field_name = 'marks' if new_node.is_mark else 'content'
+        if new_node_field_name not in self._node_prop:
+            raise ValueError(f'Adding a {new_node_field_name}: {new_node.type} to node: {self.type} is forbidden.')
+
+        self.local_info.setdefault(new_node_field_name,
+                                   ADFObject._default_field(self._node_prop[new_node_field_name]))
+        self.local_info[new_node_field_name].append(new_node)
+
         return self if self.chain_mode else new_node
 
     def extend_content(self, nodes):
@@ -105,12 +107,13 @@ class ADFObject(object):
         :param nodes: List of input nodes
         :return: Current Node
         """
-        if 'content' not in self.local_info:
+        if 'content' not in self._node_prop:
             raise RuntimeError(f'"{self.type}" node does not have the filed "content" for adding sub-nodes.')
 
         nodes = [nodes] if not isinstance(nodes, list) else nodes
         if any(not issubclass(type(node), ADFObject) or not node.is_node for node in nodes):
             raise RuntimeError('Input must only contains ADFObject.')
+        self.local_info.setdefault('content', ADFObject._default_field('content'))
         self.local_info['content'].extend(nodes)
         return self
 
@@ -155,10 +158,11 @@ class ADFObject(object):
         :param kwargs: Values to be added to a dict.
         :return: Current Node
         """
-        if field not in self.local_info:
+        if field not in self._node_prop:
             raise KeyError(f'"{field}" does not exists in the node "{self.type}"')
         if field == 'content':
             raise ValueError(f'"{field}" is protected. Do not modify it with assign_info()')
+        self.local_info.setdefault(field, ADFObject._default_field(self._node_prop[field]))
 
         if isinstance(self.local_info[field], list):
             if values:
@@ -202,6 +206,14 @@ class ADFObject(object):
 
         return self
 
+    @staticmethod
+    def _default_field(prop_type):
+        return {
+            'array': list, 'object': dict,
+            'string': str, 'enum': str,
+            'number': int,
+        }.get(prop_type, lambda: None)()
+
 
 class ADFDoc(ADFObject):
     def __init__(self, chain_mode=True):
@@ -211,9 +223,11 @@ class ADFDoc(ADFObject):
     def validate(self):
         """
         Validate the output object with the ADF Schema. Raise Exception when validation fails.
-        :return: None
+        :return: Rendered result
         """
-        return jsonschema.validate(self.render(), adf_schema())
+        render_result = self.render()
+        jsonschema.validate(render_result, adf_schema())
+        return render_result
 
 
 def load_adf(input_object: dict):
