@@ -161,12 +161,11 @@ class ADFObject(object):
             raise ValueError(f'"{field}" is protected. Do not modify it with assign_info()')
 
         if isinstance(self.local_info[field], list):
-            if len(values) == 0:
-                raise RuntimeError("Field specified without specifying any value.")
-            self.local_info[field].extend(list(values))
+            if values:
+                self.local_info[field].extend(list(values))
 
         elif isinstance(self.local_info[field], dict):
-            if len(kwargs) > 0:
+            if kwargs:
                 self.local_info[field].update(kwargs)
 
         else:
