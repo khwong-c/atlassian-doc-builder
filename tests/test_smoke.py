@@ -1,4 +1,5 @@
 import pytest
+import yaml
 
 from atlassian_doc_builder import ADFDoc, ADFObject, load_adf, adf_node_list, adf_mark_list
 from .utils import render_output_text
@@ -23,6 +24,12 @@ class TestSmoke:
         result = load_adf(input_object)
         result.validate()
         assert render_output_text(result) == render_output_text(input_object)
+
+    def test_doc_long_file(self):
+        with open('tests/test_smoke_long.json') as f:
+            input_object = yaml.safe_load(f)
+        result = load_adf(input_object)
+        assert render_output_text(result.validate()) == render_output_text(input_object)
 
     @pytest.mark.parametrize(
         "test_input,expected_object_type",
