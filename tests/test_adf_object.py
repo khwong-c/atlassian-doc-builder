@@ -22,6 +22,13 @@ class TestADFObject:
         paragraph.add('text', text='foo').add('text', text='bar')
         assert render_output_text(paragraph) == render_output_text(reference_test_objects['test_apply_var_out'])
 
+    def test_add_node_or_mark_with_right_type(self):
+        paragraph = ADFObject('paragraph', chain_mode=False)
+        text = paragraph.add('text', text='foo')
+        strong = text.add('strong')
+        assert text.is_node and not text.is_mark, "ADFObject Text expected to be a node."
+        assert strong.is_mark and not strong.is_node, "ADFObject Strong expected to be a mask."
+
     def test_apply_variable_success(self, reference_test_objects):
         template = load_adf(reference_test_objects['test_apply_var_in'])
         template.apply_variable(text_a='foo', text_b='bar')
