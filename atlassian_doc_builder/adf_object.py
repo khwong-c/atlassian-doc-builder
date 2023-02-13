@@ -232,20 +232,26 @@ class ADFDoc(ADFObject):
 
 def load_adf(input_object: dict):
     if 'type' not in input_object:
-        return ValueError('Loading ADF document with the filed "type" missing.')
-    new_node = ADFDoc() if (input_type := input_object['type']) == 'doc' else ADFObject(input_type)
+        raise ValueError('Loading ADF document with the filed "type" missing.')
+    top_node = None
 
-    for field, value in input_object.items():
-        if field == 'type':
-            continue
-        if isinstance(value, dict):
-            new_node.assign_info(field, **value)
-        elif isinstance(value, list):
-            if field == 'content':
-                new_node.extend_content([load_adf(child_node) for child_node in value])
-            if field == 'marks':
-                new_node.assign_info(field, *[load_adf(child_node) for child_node in value])
-        else:
-            new_node.assign_info(field, value)
+    build_queue = [([input_object], None)]
+    while build_queue:
+        input_objects, parent_node = build_queue.pop(0)
+        for input_object in input_objects:
+            new_node = ADFDoc() if (input_type := input_object['type']) == 'doc' else ADFObject(input_type)
 
-    return new_node
+            for field, value in input_object.items():
+                if field == 'type':
+                    continue
+                if field in ('content', 'marks'):
+                    new_node.assign_info(field)
+                    build_queue.append((value, new_node))
+                    continue
+                new_node.assign_info(field, value)
+
+            if parent_node is not None:
+                parent_node.add(new_node)
+            else:
+                top_node = new_node
+    return top_node
