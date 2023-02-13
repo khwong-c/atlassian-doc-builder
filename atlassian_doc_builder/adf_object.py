@@ -83,7 +83,7 @@ class ADFObject(object):
         Add a node to the current node.
         :param key_or_node: Key of the new node or existing node created.
         :param chain_mode: Chain Mode of the new node created by key. Existing node not affected.
-        :param kwargs:
+        :param kwargs: Extra info to be assigned to the new node.
         :return: self.chain_mode ? Current node : New Node
         """
         new_chain_mode = self.chain_mode if chain_mode is None else chain_mode
@@ -93,6 +93,9 @@ class ADFObject(object):
         if new_node_field_name not in self._node_prop:
             raise ValueError(f'Adding a {new_node_field_name}: {new_node.type} to node: {self.type} is forbidden.')
         self.assign_info(new_node_field_name, new_node)
+
+        for field, value in kwargs.items():
+            new_node.assign_info(field, value)
 
         return self if self.chain_mode else new_node
 

@@ -17,6 +17,11 @@ class TestADFObject:
             .validate()
         assert render_output_text(result) == render_output_text(reference_test_objects['test_chain_mode_false'])
 
+    def test_add_node_with_arguments(self, reference_test_objects):
+        paragraph = ADFObject('paragraph')
+        paragraph.add('text', text='foo').add('text', text='bar')
+        assert render_output_text(paragraph) == render_output_text(reference_test_objects['test_apply_var_out'])
+
     def test_apply_variable_success(self, reference_test_objects):
         template = load_adf(reference_test_objects['test_apply_var_in'])
         template.apply_variable(text_a='foo', text_b='bar')
@@ -52,3 +57,13 @@ class TestADFObject:
         doc.assign_info('content', paragraph)
         paragraph.assign_info('marks', strong)
         assert strong.parent.parent == doc
+
+
+class TestADFObjectCoverage:
+    def test_load_malformed_object(self):
+        with pytest.raises(ValueError):
+            load_adf({'content': []})
+
+    def test_create_non_exists_adf_object(self):
+        with pytest.raises(RuntimeError):
+            ADFObject('foo')
