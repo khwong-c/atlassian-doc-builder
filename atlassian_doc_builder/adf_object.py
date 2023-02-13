@@ -161,11 +161,16 @@ class ADFObject(object):
                 for node in values:
                     node._parent = self
             if values:
-                self.local_info[field].extend(list(values))
+                if isinstance(values[0], list):
+                    self.local_info[field].extend(values[0])
+                else:
+                    self.local_info[field].extend(list(values))
 
         elif isinstance(self.local_info[field], dict):
             if kwargs:
                 self.local_info[field].update(kwargs)
+            elif values:
+                self.local_info[field].update(values[0])
 
         else:
             if len(values) != 1:
