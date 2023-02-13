@@ -47,7 +47,7 @@ def adf_node_list():
 
 
 class ADFObject(object):
-    PATTERN_EXP, PATTERN_VAR = re.compile('\{[^\}]+\}'), re.compile('[0-9a-zA-Z_]+')
+    PATTERN_EXP, PATTERN_VAR = re.compile(r'\{[^}]+\}'), re.compile('[0-9a-zA-Z_]+')
 
     def __init__(self, node_type, chain_mode=True):
         """
