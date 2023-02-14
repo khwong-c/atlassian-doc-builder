@@ -65,6 +65,27 @@ class TestADFObject:
         paragraph.assign_info('marks', strong)
         assert strong.parent.parent == doc
 
+    def test_assign_info_value(self):
+        ...
+    
+    def test_assign_info_value_empty_is_not_allowed(self):
+        ...
+
+    def test_assign_info_value_multi_value_is_not_allowed(self):
+        ...
+
+    def test_assign_info_list_with_positional_args(self):
+        ...
+
+    def test_assign_info_list_with_single_list(self):
+        ...
+
+    def test_assign_info_dict_with_single_dict(self):
+        ...
+
+    def test_assign_info_dict_with_kwargs(self):
+        ...
+
 
 class TestADFObjectCoverage:
     def test_load_malformed_object(self):
