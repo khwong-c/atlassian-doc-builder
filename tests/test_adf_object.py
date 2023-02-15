@@ -114,6 +114,15 @@ class TestADFObject:
         attrs = link.local_info['attrs']
         assert attrs['href'] == href and attrs['title'] == title
 
+    def test_track_parent_with_nodes_in_add(self):
+        paragraph = ADFObject('paragraph')
+        paragraph.add(ADFObject('text', marks=(strong := ADFObject('strong'))))
+        assert strong.parent.parent is paragraph
+
+    def test_track_parent_with_nodes_in_constructor(self):
+        paragraph = ADFObject('paragraph', content=(text := ADFObject('text')))
+        assert text.parent is paragraph
+
 
 class TestADFObjectCoverage:
     def test_load_malformed_object(self):
