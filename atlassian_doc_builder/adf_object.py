@@ -155,9 +155,11 @@ class ADFObject(object):
         if field not in self._node_prop:
             raise KeyError(f'"{field}" does not exists in the node "{self.type}"')
         if field == 'content':
+            values = values[0] if values and isinstance(values[0], list) else values
             if any(not issubclass(type(node), ADFObject) or not node.is_node for node in values):
                 raise RuntimeError(f'"{field} only accepts ADFObject which is a node.')
         if field == 'marks':
+            values = values[0] if values and isinstance(values[0], list) else values
             if any(not issubclass(type(node), ADFObject) or not node.is_mark for node in values):
                 raise RuntimeError(f'"{field} only accepts ADFObject which is a mark.')
         self.local_info.setdefault(field, ADFObject._default_field(self._node_prop[field]))
