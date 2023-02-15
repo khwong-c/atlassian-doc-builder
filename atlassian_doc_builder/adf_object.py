@@ -49,7 +49,7 @@ def adf_node_list():
 class ADFObject(object):
     PATTERN_EXP, PATTERN_VAR = re.compile(r'\{[^}]+\}'), re.compile('[0-9a-zA-Z_]+')
 
-    def __init__(self, node_type, chain_mode=True):
+    def __init__(self, node_type, chain_mode=True, **kwargs):
         """
         Node/Mark Object in an Atlassian Document.
         :param node_type: Define the type of the node.
@@ -73,6 +73,9 @@ class ADFObject(object):
             for prop_key, prop_type in self._node_prop.items()
             if prop_key in self._object_list[self.type]['required']
         }
+        if kwargs:
+            for key, value in kwargs.items():
+                self.assign_info(key, value)
 
     @property
     def parent(self):

@@ -65,6 +65,10 @@ class TestADFObject:
         paragraph.assign_info('marks', strong)
         assert strong.parent.parent == doc
 
+    def test_assign_info_in_constructor(self):
+        text = ADFObject('text', text=(new_value := 'foo'))
+        assert text.local_info['text'] == new_value
+
     def test_assign_info_value(self):
         ...
     
