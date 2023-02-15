@@ -70,25 +70,49 @@ class TestADFObject:
         assert text.local_info['text'] == new_value
 
     def test_assign_info_value(self):
-        ...
-    
+        text = ADFObject('text', text='foo')
+        text.assign_info('text', new_value := 'bar')
+        assert text.local_info['text'] == new_value
+
     def test_assign_info_value_empty_is_not_allowed(self):
-        ...
+        with pytest.raises(Exception):
+            text = ADFObject('text', text='foo')
+            text.assign_info('text')
 
     def test_assign_info_value_multi_value_is_not_allowed(self):
-        ...
+        with pytest.raises(Exception):
+            text = ADFObject('text', text='foo')
+            text.assign_info('text', 'bad_value_1', 'bad_value_2')
 
     def test_assign_info_list_with_positional_args(self):
-        ...
+        paragraph = ADFObject('paragraph')
+        paragraph.assign_info('content', ADFObject('text', text=(new_value := 'foo')))
+        assert paragraph.local_info['content'][0].local_info['text'] == new_value
 
     def test_assign_info_list_with_single_list(self):
-        ...
+        text = ADFObject('text')
+        text.assign_info('marks', [
+            ADFObject('strong'), ADFObject('strike')
+        ])
+        assert len(text.local_info['marks']) == 2
 
     def test_assign_info_dict_with_single_dict(self):
-        ...
+        link = ADFObject('link')
+        link.assign_info('attrs', {
+            'href': (href := 'http://localhost'),
+            'title': (title := 'Local'),
+        })
+        attrs = link.local_info['attrs']
+        assert attrs['href'] == href and attrs['title'] == title
 
     def test_assign_info_dict_with_kwargs(self):
-        ...
+        link = ADFObject('link')
+        link.assign_info('attrs',
+                         href=(href := 'http://localhost'),
+                         title=(title := 'Local'),
+                         )
+        attrs = link.local_info['attrs']
+        assert attrs['href'] == href and attrs['title'] == title
 
 
 class TestADFObjectCoverage:
