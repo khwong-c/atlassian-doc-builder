@@ -135,10 +135,8 @@ class TestADFObjectCoverage:
 
 
 class TestADFObjectFactory:
-    OriginalClass, node_type = ADFDoc, 'doc'
-
     def test_class_creation(self):
-        node_type = TestADFObjectFactory.node_type
+        original_class = ADFObject.get_last_node_class(node_type := 'doc')
 
         node_class = ADFObject.node_class_factory(node_type)
         assert ADFObject.get_last_node_class(node_type) == node_class
@@ -148,18 +146,20 @@ class TestADFObjectFactory:
 
         assert ADFObject.get_last_node_class(node_type) == ADFDocInTest2
 
-        class RestoreADFDoc(ADFDoc):
-            ...
-
-        assert ADFObject.get_last_node_class(node_type) == RestoreADFDoc
+        # Reset the original class. Don't do it in production
+        ADFObject.node_class_registry[node_type] = original_class
 
     @pytest.mark.parametrize("node_type,test_case", [
         ("em", "test_smoke_em"),
         ("doc", "test_smoke_doc"),
     ])
     def test_load_adf_with_correct_type(self, reference_test_objects, node_type, test_case):
+        original_class = ADFObject.get_last_node_class(node_type)
         node_class = ADFObject.node_class_factory(node_type)
 
         loaded_obj = load_adf(reference_test_objects[test_case])
         assert type(loaded_obj) == node_class
         assert ADFObject.get_last_node_class(node_type) == node_class
+
+        # Reset the original class. Don't do it in production
+        ADFObject.node_class_registry[node_type] = original_class

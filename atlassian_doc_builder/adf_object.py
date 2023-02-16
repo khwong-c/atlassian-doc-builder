@@ -231,7 +231,8 @@ class ADFObject(object):
     @classmethod
     def node_class_factory(cls, node_type) -> type:
         def __new_init__(self, **kwargs):
-            cls.__init__(self, node_type, **kwargs)
+            kwargs['node_type'] = node_type
+            cls.__init__(self, **kwargs)
 
         return type(
             f'ADFAuto{node_type.capitalize()}',
@@ -253,8 +254,8 @@ class ADFObject(object):
 
 
 class ADFDoc(ADFObject.node_class_factory('doc')):
-    def __init__(self, chain_mode=True):
-        super(ADFDoc, self).__init__(chain_mode=chain_mode)
+    def __init__(self, chain_mode=True, **kwargs):
+        super(ADFDoc, self).__init__(chain_mode=chain_mode, **kwargs)
         self.local_info['version'] = 1
 
     def validate(self):
@@ -276,7 +277,7 @@ def load_adf(input_object: dict):
     while build_queue:
         input_objects, parent_node = build_queue.pop(0)
         for input_object in input_objects:
-            new_node = ADFDoc() if (input_type := input_object['type']) == 'doc' else ADFObject(input_type)
+            new_node = ADFObject.get_last_node_class(node_type := input_object['type'])(node_type=node_type)
 
             for field, value in input_object.items():
                 if field == 'type':
