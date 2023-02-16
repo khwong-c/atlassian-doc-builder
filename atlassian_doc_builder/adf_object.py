@@ -5,6 +5,10 @@ from functools import lru_cache as cache
 
 import jsonschema
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @cache
 def adf_schema():
@@ -48,6 +52,7 @@ def adf_node_list():
 
 class ADFObject(object):
     PATTERN_EXP, PATTERN_VAR = re.compile(r'\{[^}]+\}'), re.compile('[0-9a-zA-Z_]+')
+    node_class_registry, node_class_attr_name = {}, '__adf_type__'
 
     def __init__(self, node_type, chain_mode=True, **kwargs):
         """
@@ -222,10 +227,34 @@ class ADFObject(object):
             'number': int,
         }.get(prop_type, lambda: None)()
 
+    # ADFObject Class Factory
+    @classmethod
+    def node_class_factory(cls, node_type) -> type:
+        def __new_init__(self, **kwargs):
+            cls.__init__(self, node_type, **kwargs)
 
-class ADFDoc(ADFObject):
+        return type(
+            f'ADFAuto{node_type.capitalize()}',
+            (cls,),
+            {
+                '__init__': __new_init__,
+                ADFObject.node_class_attr_name: node_type,
+            }
+        )
+
+    @staticmethod
+    def get_last_node_class(node_type) -> type:
+        return ADFObject.node_class_registry.get(node_type, ADFObject)
+
+    def __init_subclass__(cls, **kwargs):
+        node_type = getattr(cls, ADFObject.node_class_attr_name, None)
+        ADFObject.node_class_registry[node_type] = cls
+        logger.debug("New ADF Type: %s on Class: %s", node_type, cls.__name__)
+
+
+class ADFDoc(ADFObject.node_class_factory('doc')):
     def __init__(self, chain_mode=True):
-        super(ADFDoc, self).__init__('doc', chain_mode=chain_mode)
+        super(ADFDoc, self).__init__(chain_mode=chain_mode)
         self.local_info['version'] = 1
 
     def validate(self):

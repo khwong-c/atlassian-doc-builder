@@ -132,3 +132,34 @@ class TestADFObjectCoverage:
     def test_create_non_exists_adf_object(self):
         with pytest.raises(RuntimeError):
             ADFObject('foo')
+
+
+class TestADFObjectFactory:
+    OriginalClass, node_type = ADFDoc, 'doc'
+
+    def test_class_creation(self):
+        node_type = TestADFObjectFactory.node_type
+
+        node_class = ADFObject.node_class_factory(node_type)
+        assert ADFObject.get_last_node_class(node_type) == node_class
+
+        class ADFDocInTest2(ADFObject.node_class_factory(node_type)):
+            ...
+
+        assert ADFObject.get_last_node_class(node_type) == ADFDocInTest2
+
+        class RestoreADFDoc(ADFDoc):
+            ...
+
+        assert ADFObject.get_last_node_class(node_type) == RestoreADFDoc
+
+    @pytest.mark.parametrize("node_type,test_case", [
+        ("em", "test_smoke_em"),
+        ("doc", "test_smoke_doc"),
+    ])
+    def test_load_adf_with_correct_type(self, reference_test_objects, node_type, test_case):
+        node_class = ADFObject.node_class_factory(node_type)
+
+        loaded_obj = load_adf(reference_test_objects[test_case])
+        assert type(loaded_obj) == node_class
+        assert ADFObject.get_last_node_class(node_type) == node_class

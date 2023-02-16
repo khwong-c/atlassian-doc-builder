@@ -1,6 +1,7 @@
 {
   "test_smoke_doc": { "type": "doc", "version": 1, "content": [ ] },
   "test_smoke_paragraph": { "type": "paragraph" },
+  "test_smoke_em": { "type": "em" },
   "test_chain_mode_false": { "content": [ { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" } ], "type": "doc", "version": 1 },
   "test_apply_var_in": { "content": [ { "text": "{text_a}", "type": "text" }, { "text": "{text_b}", "type": "text" } ], "type": "paragraph" },
   "test_apply_var_out": { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" },
