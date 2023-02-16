@@ -17,6 +17,14 @@ class ADFText(ADFObject.node_class_factory('text')):
             raise ValueError('Text cannot be empty.')
         super(ADFText, self).__init__(text=text, chain_mode=chain_mode, **kwargs)
 
+    @property
+    def text(self):
+        return self.local_info['text']
+    
+    @text.setter
+    def text(self, value):
+        self.local_info['text'] = value
+
 
 class ADFLink(ADFObject.node_class_factory('link')):
     def __init__(self, url=None, chain_mode=True, **kwargs):
@@ -25,3 +33,11 @@ class ADFLink(ADFObject.node_class_factory('link')):
         if url is not None:
             new_kwargs['attrs']['href'] = url
         super(ADFLink, self).__init__(chain_mode=chain_mode, **new_kwargs)
+
+    @property
+    def url(self):
+        return self.local_info['attrs']['href']
+    
+    @url.setter
+    def url(self, value):
+        self.local_info['attrs']['href'] = value
