@@ -1,5 +1,6 @@
 import pytest
 
+from atlassian_doc_builder import load_adf
 from atlassian_doc_builder import ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFHardBreak, ADFRule
 from atlassian_doc_builder import ADFText, ADFLink
 
@@ -23,3 +24,7 @@ class TestADFSimpleObject:
     def test_adf_link(self):
         link = ADFLink(new_url := "http://localhost")
         assert link.render()['attrs']['href'] == new_url
+
+    def test_adf_link_from_load_adf(self, reference_test_objects):
+        link = load_adf(reference_test_objects['test_smoke_link'])
+        assert 'http' in link.render()['attrs']['href']

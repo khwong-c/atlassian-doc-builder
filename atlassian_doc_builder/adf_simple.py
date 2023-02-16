@@ -1,4 +1,5 @@
 from .adf_object import ADFObject
+from copy import deepcopy
 
 # Node Type with no inputs
 ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFHardBreak, ADFRule = tuple(
@@ -19,6 +20,8 @@ class ADFText(ADFObject.node_class_factory('text')):
 
 class ADFLink(ADFObject.node_class_factory('link')):
     def __init__(self, url=None, chain_mode=True, **kwargs):
-        kwargs.setdefault('attrs', {})
-        kwargs['attrs']['href'] = '' if url is None else url
-        super(ADFLink, self).__init__(chain_mode=chain_mode, **kwargs)
+        new_kwargs = deepcopy(kwargs)
+        new_kwargs.setdefault('attrs', {})
+        if url is not None:
+            new_kwargs['attrs']['href'] = url
+        super(ADFLink, self).__init__(chain_mode=chain_mode, **new_kwargs)
