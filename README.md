@@ -39,6 +39,9 @@ pip install atlassian-doc-builder
 WIP
 
 ## Version History
+- 0.3
+  - Support `ADFText`, `ADFLink` and a bunch of one line classes
+  - ADFObject Class Factory for quick Class Development
 - 0.2
   - Add Test Suite
   - Improve ADFObject Implementations
