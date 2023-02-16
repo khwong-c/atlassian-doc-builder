@@ -36,7 +36,7 @@ pip install atlassian-doc-builder
 
 ## Examples
 
-WIP
+Please refer to [the "examples" directory](examples).
 
 ## Version History
 - 0.3
