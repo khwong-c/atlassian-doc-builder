@@ -251,6 +251,14 @@ class ADFObject(object):
             ADFObject.node_class_registry[node_type] = cls
             logger.debug("New ADF Type: %s on Class: %s", node_type, cls.__name__)
 
+    @staticmethod
+    def unimplemented_nodes():
+        return [
+            node_type
+            for node_type in list(adf_node_list()) + list(adf_mark_list())
+            if node_type not in set(ADFObject.node_class_registry)
+        ]
+
 
 class ADFContentObject(ADFObject):
     def __getitem__(self, idx):
