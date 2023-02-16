@@ -1,18 +1,18 @@
 import pytest
 
-from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFMediaGroup
-from atlassian_doc_builder import ADFHeading, ADFCodeBlock, ADFPanel, ADFMediaSingle
+from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
+from atlassian_doc_builder import ADFHeading, ADFCodeBlock, ADFPanel
+
+from atlassian_doc_builder import ADFText
 
 
 class TestADFContentObject:
     @pytest.mark.parametrize("node_class,node_type",
                              zip((
                                      ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem,
-                                     ADFMediaGroup
                              ), (
                                      'paragraph', 'blockquote',
                                      'bulletList', 'orderedList', 'listItem',
-                                     'mediaGroup',
                              )))
     def test_content_objects(self, node_type, node_class):
         assert node_class().type == node_type
@@ -35,10 +35,11 @@ class TestADFContentObject:
         obj.panel_type = (new_type := 'error')
         assert obj.panel_type == new_type
 
-    def test_media_single(self):
-        obj1 = ADFMediaSingle(layout := "center")
-        obj2 = ADFMediaSingle(layout, width := 23.5)
-        assert obj1.layout == layout
-        assert obj2.layout == layout and obj2.width == width
-        obj1.width, obj2.layout = width, "align-end"
-        assert obj2.layout != layout and obj1.width == width
+    @pytest.mark.parametrize("node_class",
+                             (
+                                     ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem,
+                                     ADFHeading, ADFCodeBlock, ADFPanel,
+                             ))
+    def test_content_add_in_arguments(self, node_class):
+        obj = node_class(content=ADFText(new_text := 'foo'))
+        assert obj[0].text == new_text

@@ -5,12 +5,11 @@ import jsonschema
 from .adf_object import ADFContentObject
 from .adf_object import adf_schema
 
-ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFMediaGroup = tuple(
+ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem = tuple(
     ADFContentObject.node_class_factory(node_type)
     for node_type in (
         'paragraph', 'blockquote',
         'bulletList', 'orderedList', 'listItem',
-        'mediaGroup',
     )
 )
 
@@ -77,29 +76,3 @@ class ADFPanel(ADFContentObject.node_class_factory('panel')):
     def panel_type(self, value):
         self.local_info['attrs']['panelType'] = value
 
-
-class ADFMediaSingle(ADFContentObject.node_class_factory('mediaSingle')):
-    def __init__(self, layout=None, width=None, chain_mode=True, **kwargs):
-        new_attrs = deepcopy(kwargs.get('attrs', {}))
-        if layout is not None:
-            new_attrs['layout'] = layout
-        if width is not None:
-            new_attrs['width'] = width
-        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFMediaSingle, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
-
-    @property
-    def layout(self):
-        return self.local_info['attrs']['layout']
-
-    @layout.setter
-    def layout(self, value):
-        self.local_info['attrs']['layout'] = value
-
-    @property
-    def width(self):
-        return self.local_info['attrs']['width']
-
-    @width.setter
-    def width(self, value):
-        self.local_info['attrs']['width'] = value
