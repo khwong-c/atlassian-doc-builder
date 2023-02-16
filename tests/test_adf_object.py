@@ -183,3 +183,9 @@ class TestADFContentObject:
     def test_get_number_of_child(self, reference_test_objects):
         doc = load_adf(ref_obj := reference_test_objects['test_get_content_by_index_basic'])
         assert len(doc) == len(ref_obj['content'])
+
+    def test_iterator(self):
+        doc = ADFDoc().extend_content(
+            [ADFObject(node_type := 'paragraph') for _ in range(10)]
+        )
+        assert all(obj.type == node_type for obj in doc)

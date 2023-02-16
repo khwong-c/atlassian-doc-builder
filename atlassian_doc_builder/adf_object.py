@@ -275,6 +275,9 @@ class ADFContentObject(ADFObject):
     def __len__(self):
         return len(self.local_info['content'])
 
+    def __iter__(self):
+        return self.local_info['content'].__iter__()
+
 
 def load_adf(input_object: Union[dict, list]) -> Union[ADFObject, list]:
     if isinstance(input_object, list):
