@@ -26,13 +26,18 @@ pip install atlassian-doc-builder
 - Reusable Template with variable filling 
 - Document Validation
 
+## Implemented Node Type
+
+Please refer to [this document](Implemented_nodes.md).
+
 ## Roadmap
 
 - [x] Create Base Class for ADF Object
 - [x] Implement Basic Features above
-- [ ] Derive common classes for easy access (e.g. Text, Paragraph)
+- [x] Derive common classes for easy access (e.g. Text, Paragraph)
 - [ ] Add short hands functions to create document
 - [ ] Table Editor and Table Row Editor
+- [ ] Media Display
 
 ## Examples
 
