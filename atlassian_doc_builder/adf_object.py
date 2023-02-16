@@ -249,11 +249,20 @@ class ADFObject(object):
 
     def __init_subclass__(cls, **kwargs):
         node_type = getattr(cls, ADFObject.node_class_attr_name, None)
-        ADFObject.node_class_registry[node_type] = cls
-        logger.debug("New ADF Type: %s on Class: %s", node_type, cls.__name__)
+        if node_type is not None:
+            ADFObject.node_class_registry[node_type] = cls
+            logger.debug("New ADF Type: %s on Class: %s", node_type, cls.__name__)
 
 
-class ADFDoc(ADFObject.node_class_factory('doc')):
+class ADFContentObject(ADFObject):
+    def __getitem__(self, idx):
+        return self.local_info['content'][idx]
+
+    def __len__(self):
+        return len(self.local_info['content'])
+
+
+class ADFDoc(ADFContentObject.node_class_factory('doc')):
     def __init__(self, chain_mode=True, **kwargs):
         super(ADFDoc, self).__init__(chain_mode=chain_mode, **kwargs)
         self.local_info['version'] = 1
