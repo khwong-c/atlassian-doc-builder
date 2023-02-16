@@ -1,7 +1,8 @@
 import pytest
 import yaml
 
-from atlassian_doc_builder import ADFDoc, ADFObject, load_adf, adf_node_list, adf_mark_list
+from atlassian_doc_builder import ADFDoc, ADFParagraph
+from atlassian_doc_builder import load_adf, adf_node_list, adf_mark_list
 from .utils import render_output_text
 
 
@@ -33,7 +34,7 @@ class TestSmoke:
 
     @pytest.mark.parametrize(
         "test_input,expected_object_type",
-        [("test_smoke_doc", ADFDoc), ("test_smoke_paragraph", ADFObject), ]
+        [("test_smoke_doc", ADFDoc), ("test_smoke_paragraph", ADFParagraph), ]
     )
     def test_doc_load_correct_type(self, reference_test_objects, test_input, expected_object_type):
         result = load_adf(reference_test_objects[test_input])

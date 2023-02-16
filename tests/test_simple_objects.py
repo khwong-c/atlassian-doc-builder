@@ -14,7 +14,7 @@ class TestADFSimpleObject:
                                      'strong', 'em', 'strike', 'code',
                                      'underline', 'hardBreak', 'rule'
                              )))
-    def test_adf_link(self, node_type, node_class):
+    def test_adf_simple_objects(self, node_type, node_class):
         assert node_class().type == node_type
 
     def test_adf_text(self):
@@ -43,7 +43,7 @@ class TestADFSimpleObject:
         link = ADFLink(new_url := "http://localhost")
         assert link.url == new_url
 
-    def test_adf_text_property(self):
+    def test_adf_link_property_set(self):
         new_url = "http://docker_host"
         link = ADFLink("http://localhost")
         link.url = new_url
