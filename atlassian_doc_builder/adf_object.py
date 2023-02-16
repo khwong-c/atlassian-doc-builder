@@ -1,11 +1,10 @@
 import json
+import logging
 import re
 import urllib.request
 from functools import lru_cache as cache
 
 import jsonschema
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -277,7 +276,9 @@ def load_adf(input_object: dict):
     while build_queue:
         input_objects, parent_node = build_queue.pop(0)
         for input_object in input_objects:
-            new_node = ADFObject.get_last_node_class(node_type := input_object['type'])(node_type=node_type)
+            object_args = {k: v for k, v in input_object.items() if k not in ('type', 'content', 'marks')}
+            new_node = ADFObject.get_last_node_class(node_type := input_object['type'])(
+                node_type=node_type, **object_args)
 
             for field, value in input_object.items():
                 if field == 'type':
