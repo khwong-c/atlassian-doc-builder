@@ -1,9 +1,27 @@
 from copy import deepcopy
+from .adf_object import adf_schema, ADFObject
 
 import jsonschema
 
-from .adf_object import ADFContentObject
-from .adf_object import adf_schema
+
+class ADFContentObject(ADFObject):
+    def __getitem__(self, idx):
+        if type(idx) is int:
+            return self.local_info['content'][idx]
+        levels, cur_obj = list(idx), self.local_info['content']
+        while levels:
+            cur_idx = levels.pop(0)
+            cur_obj = cur_obj[cur_idx]
+            if not levels:
+                return cur_obj
+            cur_obj = cur_obj.local_info['content']
+
+    def __len__(self):
+        return len(self.local_info['content'])
+
+    def __iter__(self):
+        return self.local_info['content'].__iter__()
+
 
 ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem = tuple(
     ADFContentObject.node_class_factory(node_type)

@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from .adf_object import ADFContentObject
+from .adf_content_node import ADFContentObject
 
 
 class ADFTable(ADFContentObject.node_class_factory('table')):
