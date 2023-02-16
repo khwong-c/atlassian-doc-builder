@@ -39,6 +39,9 @@ pip install atlassian-doc-builder
 WIP
 
 ## Version History
+- 0.2
+  - Add Test Suite
+  - Improve ADFObject Implementations
 - 0.1 
   - Initial Release
 
