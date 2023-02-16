@@ -1,0 +1,37 @@
+[
+  {
+    "attrs": {
+      "level": 1
+    },
+    "type": "heading",
+    "content": [
+      {
+        "text": "{title}",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "attrs": {
+      "level": 2
+    },
+    "type": "heading",
+    "content": [
+      {
+        "text": "Get me to the Repo",
+        "marks": [
+          {
+            "type": "em"
+          },
+          {
+            "attrs": {
+              "href": "https://github.com/khwong-c/atlassian-doc-builder"
+            },
+            "type": "link"
+          }
+        ],
+        "type": "text"
+      }
+    ]
+  }
+]
