@@ -5,8 +5,6 @@ import urllib.request
 from functools import lru_cache as cache
 from typing import Union
 
-import jsonschema
-
 logger = logging.getLogger(__name__)
 
 
@@ -260,21 +258,6 @@ class ADFContentObject(ADFObject):
 
     def __len__(self):
         return len(self.local_info['content'])
-
-
-class ADFDoc(ADFContentObject.node_class_factory('doc')):
-    def __init__(self, chain_mode=True, **kwargs):
-        super(ADFDoc, self).__init__(chain_mode=chain_mode, **kwargs)
-        self.local_info['version'] = 1
-
-    def validate(self):
-        """
-        Validate the output object with the ADF Schema. Raise Exception when validation fails.
-        :return: Rendered result
-        """
-        render_result = self.render()
-        jsonschema.validate(render_result, adf_schema())
-        return render_result
 
 
 def load_adf(input_object: Union[dict, list]) -> Union[ADFObject, list]:
