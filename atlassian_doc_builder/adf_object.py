@@ -1,9 +1,12 @@
 import json
+import logging
 import re
 import urllib.request
 from functools import lru_cache as cache
 
 import jsonschema
+
+logger = logging.getLogger(__name__)
 
 
 @cache
@@ -48,8 +51,9 @@ def adf_node_list():
 
 class ADFObject(object):
     PATTERN_EXP, PATTERN_VAR = re.compile(r'\{[^}]+\}'), re.compile('[0-9a-zA-Z_]+')
+    node_class_registry, node_class_attr_name = {}, '__adf_type__'
 
-    def __init__(self, node_type, chain_mode=True):
+    def __init__(self, node_type, chain_mode=True, **kwargs):
         """
         Node/Mark Object in an Atlassian Document.
         :param node_type: Define the type of the node.
@@ -73,6 +77,9 @@ class ADFObject(object):
             for prop_key, prop_type in self._node_prop.items()
             if prop_key in self._object_list[self.type]['required']
         }
+        if kwargs:
+            for key, value in kwargs.items():
+                self.assign_info(key, value)
 
     @property
     def parent(self):
@@ -152,9 +159,11 @@ class ADFObject(object):
         if field not in self._node_prop:
             raise KeyError(f'"{field}" does not exists in the node "{self.type}"')
         if field == 'content':
+            values = values[0] if values and isinstance(values[0], list) else values
             if any(not issubclass(type(node), ADFObject) or not node.is_node for node in values):
                 raise RuntimeError(f'"{field} only accepts ADFObject which is a node.')
         if field == 'marks':
+            values = values[0] if values and isinstance(values[0], list) else values
             if any(not issubclass(type(node), ADFObject) or not node.is_mark for node in values):
                 raise RuntimeError(f'"{field} only accepts ADFObject which is a mark.')
         self.local_info.setdefault(field, ADFObject._default_field(self._node_prop[field]))
@@ -217,10 +226,35 @@ class ADFObject(object):
             'number': int,
         }.get(prop_type, lambda: None)()
 
+    # ADFObject Class Factory
+    @classmethod
+    def node_class_factory(cls, node_type) -> type:
+        def __new_init__(self, **kwargs):
+            kwargs['node_type'] = node_type
+            cls.__init__(self, **kwargs)
 
-class ADFDoc(ADFObject):
-    def __init__(self, chain_mode=True):
-        super(ADFDoc, self).__init__('doc', chain_mode=chain_mode)
+        return type(
+            f'ADFAuto{node_type.capitalize()}',
+            (cls,),
+            {
+                '__init__': __new_init__,
+                ADFObject.node_class_attr_name: node_type,
+            }
+        )
+
+    @staticmethod
+    def get_last_node_class(node_type) -> type:
+        return ADFObject.node_class_registry.get(node_type, ADFObject)
+
+    def __init_subclass__(cls, **kwargs):
+        node_type = getattr(cls, ADFObject.node_class_attr_name, None)
+        ADFObject.node_class_registry[node_type] = cls
+        logger.debug("New ADF Type: %s on Class: %s", node_type, cls.__name__)
+
+
+class ADFDoc(ADFObject.node_class_factory('doc')):
+    def __init__(self, chain_mode=True, **kwargs):
+        super(ADFDoc, self).__init__(chain_mode=chain_mode, **kwargs)
         self.local_info['version'] = 1
 
     def validate(self):
@@ -242,7 +276,9 @@ def load_adf(input_object: dict):
     while build_queue:
         input_objects, parent_node = build_queue.pop(0)
         for input_object in input_objects:
-            new_node = ADFDoc() if (input_type := input_object['type']) == 'doc' else ADFObject(input_type)
+            object_args = {k: v for k, v in input_object.items() if k not in ('type', 'content', 'marks')}
+            new_node = ADFObject.get_last_node_class(node_type := input_object['type'])(
+                node_type=node_type, **object_args)
 
             for field, value in input_object.items():
                 if field == 'type':
