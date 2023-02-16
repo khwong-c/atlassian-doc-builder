@@ -3,6 +3,7 @@ import logging
 import re
 import urllib.request
 from functools import lru_cache as cache
+from typing import Union
 
 import jsonschema
 
@@ -267,7 +268,10 @@ class ADFDoc(ADFObject.node_class_factory('doc')):
         return render_result
 
 
-def load_adf(input_object: dict):
+def load_adf(input_object: Union[dict, list]) -> Union[ADFObject, list]:
+    if isinstance(input_object, list):
+        return [load_adf(obj) for obj in input_object]
+
     if 'type' not in input_object:
         raise ValueError('Loading ADF document with the filed "type" missing.')
     top_node = None
