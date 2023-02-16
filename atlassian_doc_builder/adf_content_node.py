@@ -26,3 +26,19 @@ class ADFDoc(ADFContentObject.node_class_factory('doc')):
         render_result = self.render()
         jsonschema.validate(render_result, adf_schema())
         return render_result
+
+
+class ADFHeading(ADFContentObject.node_class_factory('heading')):
+    ...
+
+
+class ADFCodeBlock(ADFContentObject.node_class_factory('codeBlock')):
+    ...
+
+
+class ADFPanel(ADFContentObject.node_class_factory('panel')):
+    ...
+
+
+class ADFMediaSingle(ADFContentObject.node_class_factory('mediaSingle')):
+    ...

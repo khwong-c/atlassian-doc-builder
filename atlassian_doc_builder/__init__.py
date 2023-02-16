@@ -6,6 +6,7 @@ from .adf_simple import ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFH
 from .adf_simple import ADFText, ADFLink
 
 from .adf_content_node import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFMediaGroup
+from .adf_content_node import ADFHeading, ADFCodeBlock, ADFPanel, ADFMediaSingle
 from .adf_content_node import ADFDoc
 
 __all__ = [ADFObject, ADFDoc]
@@ -14,6 +15,7 @@ __all__ += [load_adf]
 __all__ += [ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFHardBreak, ADFRule]
 __all__ += [ADFText, ADFLink]
 __all__ += [ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFMediaGroup]
+__all__ += [ADFHeading, ADFCodeBlock, ADFPanel, ADFMediaSingle]
 
 if __name__ == '__main__':
     pass
