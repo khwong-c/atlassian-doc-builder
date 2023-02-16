@@ -36,8 +36,8 @@ class TestADFContentObject:
         assert obj.panel_type == new_type
 
     def test_media_single(self):
-        obj1 = ADFPanel(layout := "center")
-        obj2 = ADFPanel(layout, width := 23.5)
+        obj1 = ADFMediaSingle(layout := "center")
+        obj2 = ADFMediaSingle(layout, width := 23.5)
         assert obj1.layout == layout
         assert obj2.layout == layout and obj2.width == width
         obj1.width, obj2.layout = width, "align-end"
