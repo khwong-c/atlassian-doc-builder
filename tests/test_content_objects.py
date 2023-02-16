@@ -1,8 +1,7 @@
 import pytest
 
-from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
 from atlassian_doc_builder import ADFHeading, ADFCodeBlock, ADFPanel
-
+from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
 from atlassian_doc_builder import ADFText
 
 
@@ -35,11 +34,24 @@ class TestADFContentObject:
         obj.panel_type = (new_type := 'error')
         assert obj.panel_type == new_type
 
-    @pytest.mark.parametrize("node_class",
-                             (
+    @pytest.mark.parametrize("node_class,addition_args",
+                             zip((
                                      ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem,
-                                     ADFHeading, ADFCodeBlock, ADFPanel,
-                             ))
-    def test_content_add_in_arguments(self, node_class):
-        obj = node_class(content=ADFText(new_text := 'foo'))
+                                     ADFHeading, ADFHeading, ADFHeading,
+                                     ADFCodeBlock, ADFCodeBlock, ADFCodeBlock,
+                                     ADFPanel, ADFPanel, ADFPanel,
+                             ), (
+                                     {}, {}, {}, {}, {},
+                                     {}, {'level': 2}, {'attrs': {'level': 2}},
+                                     {}, {'language': 'python'}, {'attrs': {'language': 'python'}},
+                                     {}, {'panel_type': 'success'}, {'attrs': {'panelType': 'success'}},
+
+                             )))
+    def test_content_add_in_arguments(self, node_class, addition_args):
+        obj = node_class(content=ADFText(new_text := 'foo'), **addition_args)
         assert obj[0].text == new_text
+        if 'attrs' in addition_args:
+            assert obj.local_info['attrs'] == addition_args['attrs']
+        else:
+            for k, v in addition_args.items():
+                assert getattr(obj, k) == v
