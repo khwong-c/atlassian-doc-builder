@@ -163,3 +163,16 @@ class TestADFObjectFactory:
 
         # Reset the original class. Don't do it in production
         ADFObject.node_class_registry[node_type] = original_class
+
+
+class TestADFContentObject:
+    def test_index_access(self, reference_test_objects):
+        # We expect all nodes with "content" are implemented based on ADFContentObject
+        # Including "doc" and "paragraph" in this case.
+        doc = load_adf(ref_obj := reference_test_objects['test_get_content_by_index_basic'])
+        paragraph = ref_obj['content'][0]
+        assert all(doc[0][i].text == text_node['text'] for i, text_node in enumerate(paragraph['content']))
+            
+    def test_get_number_of_child(self, reference_test_objects):
+        doc = load_adf(ref_obj := reference_test_objects['test_get_content_by_index_basic'])
+        assert len(doc) == len(ref_obj['content'])

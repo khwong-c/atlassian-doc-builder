@@ -1,8 +1,11 @@
 {
+  # Smoke Tests
   "test_smoke_doc": { "type": "doc", "version": 1, "content": [ ] },
   "test_smoke_paragraph": { "type": "paragraph" },
   "test_smoke_em": { "type": "em" },
   "test_smoke_link": { "type": "link", "attrs": { "href": "http://localhost" } },
+  
+  # Test Cases for ADFObject
   "test_chain_mode_false": { "content": [ { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" } ], "type": "doc", "version": 1 },
   "test_apply_var_in": { "content": [ { "text": "{text_a}", "type": "text" }, { "text": "{text_b}", "type": "text" } ], "type": "paragraph" },
   "test_apply_var_out": { "content": [ { "text": "foo", "type": "text" }, { "text": "bar", "type": "text" } ], "type": "paragraph" },
@@ -11,4 +14,7 @@
   "test_apply_var_member": { "text": "{object.member}", "type": "text" },
   "test_apply_var_array": { "text": "{array[0]}", "type": "text" },
   "test_apply_var_dict": { "text": "{object['key']}", "type": "text" },
+
+  # ADFContentObject
+  "test_get_content_by_index_basic": { "type": "doc", "version": 1, "content": [ { "type": "paragraph", "content" :[{ "text": "foo", "type": "text" }, { "text": "bar", "type": "text" }] },{ "type": "paragraph"} ] },
 }
