@@ -6,7 +6,7 @@ from .adf_simple import ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFH
 from .adf_simple import ADFText, ADFLink, ADFDate
 
 from .adf_content_node import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
-from .adf_content_node import ADFHeading, ADFCodeBlock, ADFPanel
+from .adf_content_node import ADFHeading, ADFCodeBlock, ADFPanel, ADFExpand
 from .adf_content_node import ADFDoc
 
 from .adf_table import ADFTable, ADFTableRow, ADFTableCell, ADFTableHeader

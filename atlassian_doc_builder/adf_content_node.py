@@ -94,3 +94,18 @@ class ADFPanel(ADFContentObject.node_class_factory('panel')):
     def panel_type(self, value):
         self.local_info['attrs']['panelType'] = value
 
+
+class ADFExpand(ADFContentObject.node_class_factory('expand')):
+    def __init__(self, title=None, chain_mode=True, **kwargs):
+        new_attrs = {'title': title} \
+            if title is not None else deepcopy(kwargs.get('attrs', {}))
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        super(ADFExpand, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+
+    @property
+    def title(self):
+        return self.local_info['attrs']['title']
+
+    @title.setter
+    def title(self, value):
+        self.local_info['attrs']['title'] = value

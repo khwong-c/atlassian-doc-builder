@@ -1,7 +1,7 @@
 import pytest
 
 from atlassian_doc_builder import ADFHeading, ADFCodeBlock, ADFPanel
-from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
+from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFExpand
 from atlassian_doc_builder import ADFText
 
 
@@ -9,9 +9,10 @@ class TestADFContentObject:
     @pytest.mark.parametrize("node_class,node_type",
                              zip((
                                      ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem,
+                                     ADFExpand
                              ), (
-                                     'paragraph', 'blockquote',
-                                     'bulletList', 'orderedList', 'listItem',
+                                     'paragraph', 'blockquote', 'bulletList', 'orderedList', 'listItem',
+                                     'expand',
                              )))
     def test_content_objects(self, node_type, node_class):
         assert node_class().type == node_type
@@ -40,11 +41,13 @@ class TestADFContentObject:
                                      ADFHeading, ADFHeading, ADFHeading,
                                      ADFCodeBlock, ADFCodeBlock, ADFCodeBlock,
                                      ADFPanel, ADFPanel, ADFPanel,
+                                     ADFExpand, ADFExpand, ADFExpand
                              ), (
                                      {}, {}, {}, {}, {},
                                      {}, {'level': 2}, {'attrs': {'level': 2}},
                                      {}, {'language': 'python'}, {'attrs': {'language': 'python'}},
                                      {}, {'panel_type': 'success'}, {'attrs': {'panelType': 'success'}},
+                                     {}, {'title': 'foo'}, {'attrs': {'title': 'foo'}},
 
                              )))
     def test_content_add_in_arguments(self, node_class, addition_args):
