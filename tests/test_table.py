@@ -47,16 +47,16 @@ class TestADFTable:
         table = ADFTable.create([4, 5], with_header=True)
         assert all(cell.type == 'tableHeader' for cell in table[0])
         assert all(cell.type == 'tableCell'
-                   for row in table[1:]
+                   for i, row in enumerate(table)
                    for cell in row
+                   if i > 0
                    )
 
     def test_append_row_empty_table(self):
         table = ADFTable()
         new_row = table.append_row()
         assert new_row is table[-1]
-        assert len(new_row) == 1
-        assert new_row[0].type == 'tableCell'
+        assert len(new_row) == 0
 
     def test_append_row_regular_layout(self):
         cols, rows = 4, 5
@@ -83,7 +83,7 @@ class TestADFTable:
         cols, rows = 4, 5
         new_row_layout = [2, 2]
         table = ADFTable.create([cols, rows])
-        new_row = table.append_row()
+        new_row = table.append_row(new_row_layout)
         assert new_row is table[-1]
         assert len(table) == rows + 1
         assert len(new_row) == len(new_row_layout)

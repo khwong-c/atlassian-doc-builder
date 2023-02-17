@@ -111,7 +111,7 @@ class ADFObject(object):
         :param nodes: List of input nodes
         :return: Current Node
         """
-        nodes = [nodes] if not isinstance(nodes, list) else nodes
+        nodes = [nodes] if isinstance(nodes, ADFObject) else nodes
         return self.assign_info('content', *nodes)
 
     def render(self):
