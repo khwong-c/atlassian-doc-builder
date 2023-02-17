@@ -10,7 +10,8 @@
 | hardBreak      | ADFHardBreak         |        
 | rule           | ADFRule              |             
 | text           | ADFText              |             
-| link           | ADFLink              |             
+| link           | ADFLink              |
+| date           | ADFDate              |
 | paragraph      | ADFParagraph         |        
 | blockquote     | ADFBlockquote        |       
 | bulletList     | ADFBulletList        |       

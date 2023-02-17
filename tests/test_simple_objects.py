@@ -2,8 +2,9 @@ import pytest
 
 from atlassian_doc_builder import load_adf
 from atlassian_doc_builder import ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFHardBreak, ADFRule
-from atlassian_doc_builder import ADFText, ADFLink
+from atlassian_doc_builder import ADFText, ADFLink, ADFDate
 
+from datetime import datetime
 
 class TestADFSimpleObject:
     @pytest.mark.parametrize("node_class,node_type",
@@ -48,3 +49,12 @@ class TestADFSimpleObject:
         link = ADFLink("http://localhost")
         link.url = new_url
         assert link.url == new_url
+
+    def test_date_empty(self):
+        t0 = datetime.now().timestamp()
+        date = ADFDate()
+        assert float(date.timestamp) - t0 * 1000 < 5 * 1000  # ms
+
+    def test_date_timestamp_in_sec(self):
+        date = ADFDate(time_in_sec := 1676596381)
+        assert date.timestamp == str(time_in_sec * 1000)

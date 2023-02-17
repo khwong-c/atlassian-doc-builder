@@ -1,5 +1,7 @@
-from .adf_object import ADFObject
 from copy import deepcopy
+from datetime import datetime
+
+from .adf_object import ADFObject
 
 # Node Type with no inputs
 ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFHardBreak, ADFRule = tuple(
@@ -20,7 +22,7 @@ class ADFText(ADFObject.node_class_factory('text')):
     @property
     def text(self):
         return self.local_info['text']
-    
+
     @text.setter
     def text(self, value):
         self.local_info['text'] = value
@@ -37,7 +39,28 @@ class ADFLink(ADFObject.node_class_factory('link')):
     @property
     def url(self):
         return self.local_info['attrs']['href']
-    
+
     @url.setter
     def url(self, value):
         self.local_info['attrs']['href'] = value
+
+
+class ADFDate(ADFObject.node_class_factory('date')):
+    def __init__(self, timestamp=None, chain_mode=True, **kwargs):
+        new_attrs = {
+            'timestamp': str(
+                kwargs.get('attrs', {}).get('timestamp',
+                                            (datetime.now().timestamp() if timestamp is None else timestamp) * 1000
+                                            )
+            )
+        }
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        super(ADFDate, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+
+    @property
+    def timestamp(self):
+        return self.local_info['attrs']['timestamp']
+
+    @timestamp.setter
+    def timestamp(self, value):
+        self.local_info['attrs']['timestamp'] = value
