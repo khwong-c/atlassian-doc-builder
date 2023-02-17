@@ -36,7 +36,7 @@ Please refer to [this document](Implemented_nodes.md).
 - [x] Implement Basic Features above
 - [x] Derive common classes for easy access (e.g. Text, Paragraph)
 - [ ] Add short hands functions to create document
-- [ ] Table Editor and Table Row Editor
+- [x] Table Editor and Table Row Editor
 - [ ] Media Display
 
 ## Examples
@@ -44,13 +44,18 @@ Please refer to [this document](Implemented_nodes.md).
 Please refer to [the "examples" directory](examples).
 
 ## Version History
+
+- 0.4
+  - Implement Table Objects with creation routine
+  - Implement set of Block Nodes with children
+  - Index access to child nodes with `[]`. Multiple index supported. e.g. `doc[1,2,3]`
 - 0.3
   - Support `ADFText`, `ADFLink` and a bunch of one line classes
   - ADFObject Class Factory for quick Class Development
 - 0.2
   - Add Test Suite
   - Improve ADFObject Implementations
-- 0.1 
+- 0.1
   - Initial Release
 
 ## Contribution and Contact
