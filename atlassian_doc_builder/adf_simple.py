@@ -64,3 +64,19 @@ class ADFDate(ADFObject.node_class_factory('date')):
     @timestamp.setter
     def timestamp(self, value):
         self.local_info['attrs']['timestamp'] = value
+
+
+class ADFPlaceholder(ADFObject.node_class_factory('placeholder')):
+    def __init__(self, text=None, chain_mode=True, **kwargs):
+        new_attrs = {'text': text} \
+            if text is not None else deepcopy(kwargs.get('attrs', {}))
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        super(ADFPlaceholder, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+
+    @property
+    def text(self):
+        return self.local_info['attrs']['text']
+
+    @text.setter
+    def text(self, value):
+        self.local_info['attrs']['text'] = value

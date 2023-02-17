@@ -1,19 +1,22 @@
+from datetime import datetime
+
 import pytest
 
-from atlassian_doc_builder import load_adf
 from atlassian_doc_builder import ADFStrong, ADFEm, ADFStrike, ADFCode, ADFUnderline, ADFHardBreak, ADFRule
-from atlassian_doc_builder import ADFText, ADFLink, ADFDate
+from atlassian_doc_builder import ADFText, ADFLink, ADFDate, ADFPlaceholder
+from atlassian_doc_builder import load_adf
 
-from datetime import datetime
 
 class TestADFSimpleObject:
     @pytest.mark.parametrize("node_class,node_type",
                              zip((
                                      ADFStrong, ADFEm, ADFStrike, ADFCode,
-                                     ADFUnderline, ADFHardBreak, ADFRule
+                                     ADFUnderline, ADFHardBreak, ADFRule,
+                                     ADFDate, ADFPlaceholder,
                              ), (
                                      'strong', 'em', 'strike', 'code',
-                                     'underline', 'hardBreak', 'rule'
+                                     'underline', 'hardBreak', 'rule',
+                                     'date', 'placeholder',
                              )))
     def test_adf_simple_objects(self, node_type, node_class):
         assert node_class().type == node_type
@@ -22,13 +25,19 @@ class TestADFSimpleObject:
         text = ADFText(text_content := 'foo bar')
         assert text.render()['text'] == text_content
 
-    def test_adf_text_property(self):
-        text = ADFText(text_content := 'foo bar')
+    @pytest.mark.parametrize("node_class", (
+            ADFText, ADFPlaceholder
+    ))
+    def test_adf_text_property(self, node_class):
+        text = node_class(text_content := 'foo bar')
         assert text.text == text_content
 
-    def test_adf_text_property_set(self):
+    @pytest.mark.parametrize("node_class", (
+            ADFText, ADFPlaceholder
+    ))
+    def test_adf_text_property_set(self, node_class):
         text_content = 'foo bar'
-        text = ADFText('dummy')
+        text = node_class('dummy')
         text.text = text_content
         assert text.text == text_content
 
@@ -58,3 +67,4 @@ class TestADFSimpleObject:
     def test_date_timestamp_in_sec(self):
         date = ADFDate(time_in_sec := 1676596381)
         assert date.timestamp == str(time_in_sec * 1000)
+
