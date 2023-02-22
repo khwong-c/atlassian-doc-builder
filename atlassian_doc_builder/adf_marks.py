@@ -25,3 +25,18 @@ class ADFLink(ADFObject.node_class_factory('link')):
     def url(self, value):
         self.assign_info('attrs', href=value)
 
+
+class ADFBreakout(ADFObject.node_class_factory('breakout')):
+    def __init__(self, mode=None, chain_mode=True, **kwargs):
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        super(ADFBreakout, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.mode = mode if mode is not None else \
+            kwargs.get('attrs', {}).get('mode', '')
+
+    @property
+    def mode(self):
+        return self.local_info['attrs'].get('mode')
+
+    @mode.setter
+    def mode(self, value):
+        self.assign_info('attrs', mode=value)
