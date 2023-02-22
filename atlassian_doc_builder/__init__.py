@@ -7,6 +7,7 @@ from .adf_simple import ADFText, ADFLink, ADFDate, ADFPlaceholder
 
 from .adf_content_node import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
 from .adf_content_node import ADFHeading, ADFCodeBlock, ADFPanel, ADFExpand, ADFTaskList, ADFTaskItem
+from .adf_content_node import ADFDecisionList, ADFDecisionItem
 from .adf_content_node import ADFDoc
 
 from .adf_table import ADFTable, ADFTableRow, ADFTableCell, ADFTableHeader

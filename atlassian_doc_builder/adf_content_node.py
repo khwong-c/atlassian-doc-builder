@@ -151,3 +151,7 @@ class ADFTaskItem(ADFContentObject.node_class_factory('taskItem')):
     @local_id.setter
     def local_id(self, value):
         self.assign_info('attrs', localId=value)
+
+
+ADFDecisionList = ADFTaskList.node_class_factory('decisionList')
+ADFDecisionItem = ADFTaskItem.node_class_factory('decisionItem')

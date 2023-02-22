@@ -4,6 +4,7 @@ from atlassian_doc_builder import ADFHeading, ADFCodeBlock, ADFPanel
 from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFExpand
 from atlassian_doc_builder import ADFText
 from atlassian_doc_builder import ADFTaskList, ADFTaskItem
+from atlassian_doc_builder import ADFDecisionList, ADFDecisionItem
 
 
 class TestADFContentObject:
@@ -49,6 +50,12 @@ class TestADFContentObject:
                                      ADFTaskItem,
                                      ADFTaskItem,
                                      ADFTaskItem,
+                                     ADFDecisionList, ADFDecisionList, ADFDecisionList,
+                                     ADFDecisionItem, ADFDecisionItem, ADFDecisionItem,
+                                     ADFDecisionItem,
+                                     ADFDecisionItem,
+                                     ADFDecisionItem,
+                                     ADFDecisionItem,
                              ), (
                                      {}, {}, {}, {}, {},
                                      {}, {'level': 2}, {'attrs': {'level': 2}},
