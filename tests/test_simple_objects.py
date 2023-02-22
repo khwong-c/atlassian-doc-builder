@@ -62,9 +62,17 @@ class TestADFSimpleObject:
     def test_date_empty(self):
         t0 = datetime.now().timestamp()
         date = ADFDate()
-        assert float(date.timestamp) - t0 * 1000 < 5 * 1000  # ms
+        assert float(date.timestamp) - t0 < 5  # sec
 
     def test_date_timestamp_in_sec(self):
         date = ADFDate(time_in_sec := 1676596381)
-        assert date.timestamp == str(time_in_sec * 1000)
+        assert date.timestamp == time_in_sec
 
+    def test_date_timestamp_in_ms(self):
+        date = ADFDate(time_in_ms := 1676596381123)
+        assert date.timestamp == time_in_ms // 1000
+
+    def test_date_timestamp_in_string(self):
+        date = ADFDate(time_in_ms := (time_in_s := "1676596381") + "185")
+        assert date.timestamp == int(time_in_s)
+        date.render()['attrs']['timestamp'] == time_in_ms
