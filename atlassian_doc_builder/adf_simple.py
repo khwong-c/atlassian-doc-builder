@@ -25,58 +25,53 @@ class ADFText(ADFObject.node_class_factory('text')):
 
     @text.setter
     def text(self, value):
-        self.local_info['text'] = value
+        self.assign_info('text', value)
 
 
 class ADFLink(ADFObject.node_class_factory('link')):
     def __init__(self, url=None, chain_mode=True, **kwargs):
-        new_kwargs = deepcopy(kwargs)
-        new_kwargs.setdefault('attrs', {})
-        if url is not None:
-            new_kwargs['attrs']['href'] = url
-        super(ADFLink, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        new_attrs = {k: v for k, v in kwargs.get('attrs', {}).items() if k != 'href'}
+        super(ADFLink, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        self.url = url if url is not None else \
+            kwargs.get('attrs', {}).get('href', '#')
 
     @property
     def url(self):
-        return self.local_info['attrs']['href']
+        return self.local_info['attrs'].get('href')
 
     @url.setter
     def url(self, value):
-        self.local_info['attrs']['href'] = value
+        self.assign_info('attrs', href=value)
 
 
 class ADFDate(ADFObject.node_class_factory('date')):
     def __init__(self, timestamp=None, chain_mode=True, **kwargs):
-        new_attrs = {
-            'timestamp': str(
-                kwargs.get('attrs', {}).get('timestamp',
-                                            (datetime.now().timestamp() if timestamp is None else timestamp) * 1000
-                                            )
-            )
-        }
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFDate, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        super(ADFDate, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.timestamp = timestamp if timestamp is not None else \
+            kwargs.get('attrs', {}).get('timestamp', (datetime.now().timestamp()))
 
     @property
     def timestamp(self):
-        return self.local_info['attrs']['timestamp']
+        return int(self.local_info['attrs'].get('timestamp')) // 1000
 
     @timestamp.setter
     def timestamp(self, value):
-        self.local_info['attrs']['timestamp'] = value
+        self.assign_info('attrs', timestamp=value if isinstance(value, str) else str(value * 1000))
 
 
 class ADFPlaceholder(ADFObject.node_class_factory('placeholder')):
     def __init__(self, text=None, chain_mode=True, **kwargs):
-        new_attrs = {'text': text} \
-            if text is not None else deepcopy(kwargs.get('attrs', {}))
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFPlaceholder, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        super(ADFPlaceholder, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.text = text if text is not None else \
+            kwargs.get('attrs', {}).get('text', '')
 
     @property
     def text(self):
-        return self.local_info['attrs']['text']
+        return self.local_info['attrs'].get('text')
 
     @text.setter
     def text(self, value):
-        self.local_info['attrs']['text'] = value
+        self.assign_info('attrs', text=value)

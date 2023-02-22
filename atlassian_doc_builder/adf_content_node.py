@@ -49,10 +49,10 @@ class ADFDoc(ADFContentObject.node_class_factory('doc')):
 
 class ADFHeading(ADFContentObject.node_class_factory('heading')):
     def __init__(self, level=None, chain_mode=True, **kwargs):
-        new_attrs = {'level': level} \
-            if level is not None else deepcopy(kwargs.get('attrs', {}))
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFHeading, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        super(ADFHeading, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.level = level if level is not None else \
+            kwargs.get('attrs', {}).get('level', 1)
 
     @property
     def level(self):
@@ -60,52 +60,53 @@ class ADFHeading(ADFContentObject.node_class_factory('heading')):
 
     @level.setter
     def level(self, value):
-        self.local_info['attrs']['level'] = value
+        self.assign_info('attrs', level=value)
 
 
 class ADFCodeBlock(ADFContentObject.node_class_factory('codeBlock')):
     def __init__(self, language=None, chain_mode=True, **kwargs):
-        new_attrs = {'language': language} \
-            if language is not None else deepcopy(kwargs.get('attrs', {}))
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFCodeBlock, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        super(ADFCodeBlock, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.language = language if language is not None else \
+            kwargs.get('attrs', {}).get('language', '')
 
     @property
     def language(self):
-        return self.local_info['attrs']['language']
+        return self.local_info['attrs'].get('language')
 
     @language.setter
     def language(self, value):
-        self.local_info['attrs']['language'] = value
+        self.assign_info('attrs', language=value)
 
 
 class ADFPanel(ADFContentObject.node_class_factory('panel')):
     def __init__(self, panel_type=None, chain_mode=True, **kwargs):
-        new_attrs = {'panelType': panel_type} \
-            if panel_type is not None else deepcopy(kwargs.get('attrs', {}))
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        new_attrs = {k: v for k, v in kwargs.get('attrs', {}).items() if k != 'panelType'}
         super(ADFPanel, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        self.panel_type = panel_type if panel_type is not None else \
+            kwargs.get('attrs', {}).get('panelType', 'info')
 
     @property
     def panel_type(self):
-        return self.local_info['attrs']['panelType']
+        return self.local_info['attrs'].get('panelType')
 
     @panel_type.setter
     def panel_type(self, value):
-        self.local_info['attrs']['panelType'] = value
+        self.assign_info('attrs', panelType=value)
 
 
 class ADFExpand(ADFContentObject.node_class_factory('expand')):
     def __init__(self, title=None, chain_mode=True, **kwargs):
-        new_attrs = {'title': title} \
-            if title is not None else deepcopy(kwargs.get('attrs', {}))
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFExpand, self).__init__(chain_mode=chain_mode, attrs=new_attrs, **new_kwargs)
+        super(ADFExpand, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.title = title if title is not None else \
+            kwargs.get('attrs', {}).get('title', '')
 
     @property
     def title(self):
-        return self.local_info['attrs']['title']
+        return self.local_info['attrs'].get('title')
 
     @title.setter
     def title(self, value):
-        self.local_info['attrs']['title'] = value
+        self.assign_info('attrs', title=value)
