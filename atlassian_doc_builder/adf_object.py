@@ -36,7 +36,7 @@ def _decode_schema_with_filter(schema, filter_expression):
 def adf_mark_list():
     return _decode_schema_with_filter(
         adf_schema(),
-        lambda key, value: 'mark' in key[-4:]
+        lambda key, value: 'mark' in key[-4:] and value.get('type') == 'object'
     )
 
 
@@ -44,7 +44,7 @@ def adf_mark_list():
 def adf_node_list():
     return _decode_schema_with_filter(
         adf_schema(),
-        lambda key, value: 'node' in key[-4:] and 'type' in value
+        lambda key, value: 'node' in key[-4:] and value.get('type') == 'object'
     )
 
 
