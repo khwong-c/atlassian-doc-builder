@@ -1,7 +1,6 @@
-from copy import deepcopy
-from .adf_object import adf_schema, ADFObject
-
 import jsonschema
+
+from .adf_object import adf_schema, ADFObject
 
 
 class ADFContentObject(ADFObject):
@@ -110,3 +109,45 @@ class ADFExpand(ADFContentObject.node_class_factory('expand')):
     @title.setter
     def title(self, value):
         self.assign_info('attrs', title=value)
+
+
+class ADFTaskList(ADFContentObject.node_class_factory('taskList')):
+    def __init__(self, local_id=None, chain_mode=True, **kwargs):
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        super(ADFTaskList, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.local_id = local_id if local_id is not None else \
+            kwargs.get('attrs', {}).get('localId', '')
+
+    @property
+    def local_id(self):
+        return self.local_info['attrs'].get('localId')
+
+    @local_id.setter
+    def local_id(self, value):
+        self.assign_info('attrs', localId=value)
+
+
+class ADFTaskItem(ADFContentObject.node_class_factory('taskItem')):
+    def __init__(self, state=None, local_id=None, chain_mode=True, **kwargs):
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        super(ADFTaskItem, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.state = state if state is not None else \
+            kwargs.get('attrs', {}).get('state', '')
+        self.local_id = local_id if local_id is not None else \
+            kwargs.get('attrs', {}).get('localId', '')
+
+    @property
+    def state(self):
+        return self.local_info['attrs'].get('state')
+
+    @state.setter
+    def state(self, value):
+        self.assign_info('attrs', state=value)
+
+    @property
+    def local_id(self):
+        return self.local_info['attrs'].get('localId')
+
+    @local_id.setter
+    def local_id(self, value):
+        self.assign_info('attrs', localId=value)

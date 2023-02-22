@@ -3,6 +3,7 @@ import pytest
 from atlassian_doc_builder import ADFHeading, ADFCodeBlock, ADFPanel
 from atlassian_doc_builder import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem, ADFExpand
 from atlassian_doc_builder import ADFText
+from atlassian_doc_builder import ADFTaskList, ADFTaskItem
 
 
 class TestADFContentObject:
@@ -41,20 +42,34 @@ class TestADFContentObject:
                                      ADFHeading, ADFHeading, ADFHeading,
                                      ADFCodeBlock, ADFCodeBlock, ADFCodeBlock,
                                      ADFPanel, ADFPanel, ADFPanel,
-                                     ADFExpand, ADFExpand, ADFExpand
+                                     ADFExpand, ADFExpand, ADFExpand,
+                                     ADFTaskList, ADFTaskList, ADFTaskList,
+                                     ADFTaskItem, ADFTaskItem, ADFTaskItem,
+                                     ADFTaskItem,
+                                     ADFTaskItem,
+                                     ADFTaskItem,
+                                     ADFTaskItem,
                              ), (
                                      {}, {}, {}, {}, {},
                                      {}, {'level': 2}, {'attrs': {'level': 2}},
                                      {}, {'language': 'python'}, {'attrs': {'language': 'python'}},
                                      {}, {'panel_type': 'success'}, {'attrs': {'panelType': 'success'}},
                                      {}, {'title': 'foo'}, {'attrs': {'title': 'foo'}},
-
+                                     {}, {'local_id': 'foo'}, {'attrs': {'localId': 'foo'}},
+                                     {}, {'local_id': 'foo'}, {'attrs': {'localId': 'foo'}},
+                                     {'state': 'TODO', 'local_id': 'foo'},
+                                     {'attrs': {'state': 'TODO', 'localId': 'foo'}},
+                                     {'local_id': 'foo', 'attrs': {'state': 'TODO'}},
+                                     {'state': 'TODO', 'attrs': {'localId': 'foo'}},
                              )))
     def test_content_add_in_arguments(self, node_class, addition_args):
         obj = node_class(content=ADFText(new_text := 'foo'), **addition_args)
         assert obj[0].text == new_text
+
         if 'attrs' in addition_args:
-            assert obj.local_info['attrs'] == addition_args['attrs']
+            rendered = obj.render()
+            for k in addition_args['attrs']:
+                assert rendered['attrs'][k] == addition_args['attrs'][k]
         else:
             for k, v in addition_args.items():
                 assert getattr(obj, k) == v
