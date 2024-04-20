@@ -45,6 +45,10 @@ Please refer to [the "examples" directory](examples).
 
 ## Version History
 
+- 0.5
+  - Implement Task, Decision List and related item
+  - Implement Expand (Collapsible Section) and Placeholder
+  - Implement Date and a more marks for text decoration
 - 0.4
   - Implement Table Objects with creation routine
   - Implement a set of Block Nodes with children

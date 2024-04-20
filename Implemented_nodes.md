@@ -11,7 +11,9 @@
 | rule           | ADFRule              |             
 | text           | ADFText              |             
 | link           | ADFLink              |
+| breakout       | ADFBreakout          |
 | date           | ADFDate              |
+| placeholder    | ADFPlaceholder       |
 | paragraph      | ADFParagraph         |        
 | blockquote     | ADFBlockquote        |       
 | bulletList     | ADFBulletList        |       
@@ -24,5 +26,11 @@
 | tableCell      | ADFTableCell         |        
 | tableHeader    | ADFTableHeader       |      
 | table          | ADFTable             |            
-| tableRow       | ADFTableRow          |         
+| tableRow       | ADFTableRow          |
+| status         | ADFStatus            |
+| expand         | ADFExpand            |
+| taskList       | ADFTaskList          |
+| taskItem       | ADFTaskItem          |
+| decisionList   | ADFDecisionList      |
+| decisionItem   | ADFDecisionItem      |
 | -------------- | -------------------- | 
