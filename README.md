@@ -2,6 +2,9 @@
 
 Creating Atlassian Documents in a programmatic way.
 
+![PyPI - Downloads](https://img.shields.io/pypi/dw/atlassian-doc-builder)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/atlassian-doc-builder)
+
 ## Description
 
 Provide an automatic way to generate documents and reports on the Atlassian Platform (e.g. Confluence, Jira).
