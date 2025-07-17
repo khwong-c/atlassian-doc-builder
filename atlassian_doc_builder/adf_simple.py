@@ -67,7 +67,7 @@ class ADFPlaceholder(ADFObject.node_class_factory('placeholder')):
 class ADFStatus(ADFObject.node_class_factory('status')):
     def __init__(self, text=None, color=None, chain_mode=True, **kwargs):
         new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
-        super(ADFPlaceholder, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        super(ADFStatus, self).__init__(chain_mode=chain_mode, **new_kwargs)
         self.text = text if text is not None else \
             kwargs.get('attrs', {}).get('text', '')
         self.color = color if color is not None else \
