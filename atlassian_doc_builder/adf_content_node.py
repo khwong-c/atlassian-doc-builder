@@ -36,13 +36,14 @@ class ADFDoc(ADFContentObject.node_class_factory('doc')):
         super(ADFDoc, self).__init__(chain_mode=chain_mode, **kwargs)
         self.local_info['version'] = 1
 
-    def validate(self):
+    def validate(self, schema_url=None):
         """
-        Validate the output object with the ADF Schema. Raise Exception when validation fails.
+        Validate the output object with the ADF Schema. Raise an Exception when validation fails.
+        :param schema_url: Specify the Schema URL used for validation. Passing None to use the default, latest Schema.
         :return: Rendered result
         """
         render_result = self.render()
-        jsonschema.validate(render_result, adf_schema())
+        jsonschema.validate(render_result, adf_schema(schema_url))
         return render_result
 
 
