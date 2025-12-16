@@ -7,10 +7,10 @@ from typing import Union
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_SCHEMA_URL='https://unpkg.com/@atlaskit/adf-schema@latest/json-schema/v1/full.json'
+DEFAULT_SCHEMA_URL = 'https://unpkg.com/@atlaskit/adf-schema@latest/json-schema/v1/full.json'
 
 @cache
-def adf_schema(schema_url):
+def adf_schema(schema_url=None):
     if schema_url is None:
         schema_url = DEFAULT_SCHEMA_URL
     with urllib.request.urlopen(schema_url) as response:
