@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 @cache
-def adf_schema():
-    with urllib.request.urlopen('https://go.atlassian.com/adf-json-schema') as response:
+def adf_schema(schema_url='https://unpkg.com/@atlaskit/adf-schema@latest/json-schema/v1/full.json'):
+    with urllib.request.urlopen(schema_url) as response:
         return json.load(response)
 
 
