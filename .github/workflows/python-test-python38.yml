@@ -6,6 +6,8 @@ name: Python3.8 Testing
 on:
   push:
     branches: [ "main", "development" ]
+  pull_request:
+    types: [opened, reopened]
   
 permissions:
   contents: read
