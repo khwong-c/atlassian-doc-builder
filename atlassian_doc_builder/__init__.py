@@ -5,6 +5,7 @@ from .adf_object import load_adf
 from .adf_simple import ADFHardBreak, ADFRule
 from .adf_simple import ADFText, ADFDate, ADFPlaceholder
 from .adf_simple import ADFStatus
+from .adf_simple import ADFMention
 
 from .adf_content_node import ADFParagraph, ADFBlockquote, ADFBulletList, ADFOrderList, ADFListItem
 from .adf_content_node import ADFHeading, ADFCodeBlock, ADFPanel, ADFExpand, ADFTaskList, ADFTaskItem
