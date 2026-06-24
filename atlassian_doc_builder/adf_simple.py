@@ -105,7 +105,7 @@ class ADFMention(ADFObject.node_class_factory('mention')):
     def id(self):
         return self.local_info['id']
 
-    @text.setter
+    @id.setter
     def id(self, value):
         self.assign_info('id', value)
     

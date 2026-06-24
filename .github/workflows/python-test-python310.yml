@@ -5,7 +5,6 @@ name: Python3.10 Testing
 
 on:
   push:
-    branches: [ "main", "development" ]
   
 permissions:
   contents: read
