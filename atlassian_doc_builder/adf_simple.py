@@ -88,3 +88,31 @@ class ADFStatus(ADFObject.node_class_factory('status')):
     @color.setter
     def color(self, value):
         self.assign_info('attrs', color=value)
+
+
+class ADFMention(ADFObject.node_class_factory('mention')):
+    def __init__(self, id_=None, text=None, chain_mode=True, **kwargs):
+        new_kwargs = {k: v for k, v in kwargs.items() if k != 'attrs'}
+        if not id_ and 'id' not in kwargs:
+            raise ValueError('ID cannot be empty.')
+        super(ADFMention, self).__init__(chain_mode=chain_mode, **new_kwargs)
+        self.text = text if text is not None else \
+            kwargs.get('attrs', {}).get('text', '')
+        self.id = id_ if id_ is not None else \
+            kwargs.get('attrs', {}).get('id', '')
+
+    @property
+    def id(self):
+        return self.local_info['id']
+
+    @text.setter
+    def id(self, value):
+        self.assign_info('id', value)
+    
+    @property
+    def text(self):
+        return self.local_info['text']
+
+    @text.setter
+    def text(self, value):
+        self.assign_info('text', value)
